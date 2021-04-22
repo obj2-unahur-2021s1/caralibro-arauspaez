@@ -8,14 +8,14 @@ abstract class Publicacion() { //Agregue el atributo **likes**
     val likers = mutableListOf<Usuario>() //Ver
     abstract fun espacioQueOcupa(): Int
     fun cantidadLikes() = likers.size
-    fun sumarUsuarioConLike(usuario: Usuario) {
+    fun sumarUsuarioConLike(usuario: Usuario){
         if (!likers.contains(usuario)){
             likers.add(usuario)
         }
     }
     fun quienLikeo() = likers
     fun cambiarPermiso(nuevoPermiso : Permiso){ permiso = nuevoPermiso }
-    fun quienPuedeVer(){} //Que usuario puede ver esta publicacion (publico, solo amigos, privado con lista, publico con lista)
+    fun quienPuedeVer() = this.permiso //Que usuario puede ver esta publicacion (publico, solo amigos, privado con lista, publico con lista)
 
     fun puedeVerPublicacion(usuarioChusma: Usuario,usuarioDueño: Usuario){
         permiso.puedeVerPublicacion(usuarioChusma,usuarioDueño)

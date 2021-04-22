@@ -13,9 +13,6 @@ class Usuario {
       publicacion.sumarUsuarioConLike(this)
     }
   }
-  fun cambiarCalidadVideo(publicacionAModificar: Publicacion, nuevaCalidad : Calidad){
-    publicaciones.filter{ it == publicacionAModificar }.cambiarCalidad(nuevaCalidad) //Arreglar
-  }
   fun agregarAmigo(nuevoUsuario: Usuario) {
     if(!amigos.contains(nuevoUsuario))
       amigos.add(nuevoUsuario)
