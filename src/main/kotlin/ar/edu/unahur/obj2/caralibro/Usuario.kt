@@ -13,17 +13,13 @@ class Usuario {
       publicacion.sumarUsuarioConLike(this)
     }
   }
-
-  //fun cambiarCalidadVideo(nuevaCalidad){}
-
-  fun publicacionesFotos() = publicaciones.filter{ it.tipoPublicacion() == "foto" }
-
+  fun cambiarCalidadVideo(publicacionAModificar: Publicacion, nuevaCalidad : Calidad){
+    publicaciones.filter{ it == publicacionAModificar }.cambiarCalidad(nuevaCalidad) //Arreglar
+  }
   fun agregarAmigo(nuevoUsuario: Usuario) {
     if(!amigos.contains(nuevoUsuario))
       amigos.add(nuevoUsuario)
       nuevoUsuario.amigos.add(this)
   }
-
-  //fun puedoVerYo(publicacion: Publicacion) = publicaciones.contains(publicacion)
-
+  fun puedoVerYo() = publicaciones.size > 0 //Mientras haya publicaciones puede ver
 }
