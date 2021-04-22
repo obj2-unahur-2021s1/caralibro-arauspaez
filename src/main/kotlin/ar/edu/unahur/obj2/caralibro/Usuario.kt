@@ -18,6 +18,10 @@ class Usuario {
       amigos.add(nuevoUsuario)
       nuevoUsuario.amigos.add(this)
   }
+  fun excluirAmigo(nuevoUsuario: Usuario) {
+    if(!excluidos.contains(nuevoUsuario))
+      excluidos.add(nuevoUsuario)
+  }
   fun puedoVerYo() = publicaciones.size > 0 //Un usuario puede ver sus propias publicaciones
   fun puedoVerPublicacion(publicacion: Publicacion, usuario: Usuario) =
     publicacion.puedeVerPublicacion(usuarioChusma = this, usuarioDueño = usuario) //Saber si un usuario puede ver cierta publicacion.
