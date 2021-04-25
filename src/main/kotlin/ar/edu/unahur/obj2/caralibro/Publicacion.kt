@@ -17,8 +17,8 @@ abstract class Publicacion() { //Agregue el atributo **likes**
     fun cambiarPermiso(nuevoPermiso : Permiso){ permiso = nuevoPermiso }
     fun quienPuedeVer() = this.permiso //Que usuario puede ver esta publicacion (publico, solo amigos, privado con lista, publico con lista)
 
-    fun puedeVerPublicacion(usuarioChusma: Usuario,usuarioDueño: Usuario){
-        permiso.puedeVerPublicacion(usuarioChusma,usuarioDueño)
+    fun puedeVerPublicacion(usuarioChusma: Usuario,usuarioDuenio: Usuario){ //Tipo Unit -> WTF???
+        this.permiso.puedeVerPublicacion(usuarioChusma,usuarioDuenio)
     }
 }
 
@@ -53,18 +53,18 @@ object FactorDeCompresionGlobal {
     }
 }
 //Clase abst Permiso
-abstract class Permiso{
-    abstract fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDueño: Usuario) : Boolean
+abstract class Permiso() {
+    abstract fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDuenio: Usuario) : Boolean
 }
 object Publico: Permiso() {
-    override fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDueño :Usuario) = true
+    override fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDuenio :Usuario) = true
 }
 object SoloAmigos: Permiso() {
-    override fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDueño :Usuario) =  usuarioDueño.amigos.contains(usuarioChusma)
+    override fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDuenio :Usuario) =  usuarioDuenio.amigos.contains(usuarioChusma)
 }
 object PrivadoConListaDePermitidos: Permiso(){
-    override fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDueño :Usuario) =  usuarioDueño.excluidos.contains(usuarioChusma)
+    override fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDuenio: Usuario) =  usuarioDuenio.excluidos.contains(usuarioChusma)
 }
 object PublicoConListaDeExcluidos: Permiso(){
-    override fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDueño :Usuario) =  !usuarioDueño.excluidos.contains(usuarioChusma)
+    override fun puedeVerPublicacion(usuarioChusma: Usuario, usuarioDuenio: Usuario) =  !usuarioDuenio.excluidos.contains(usuarioChusma)
 }
