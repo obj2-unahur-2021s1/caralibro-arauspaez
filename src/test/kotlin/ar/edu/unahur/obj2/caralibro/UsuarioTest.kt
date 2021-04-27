@@ -1,8 +1,8 @@
 package ar.edu.unahur.obj2.caralibro
 
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
 
 class UsuarioTest : DescribeSpec({
@@ -15,6 +15,7 @@ class UsuarioTest : DescribeSpec({
     val fotoLucho = Foto(10, 10)
     val textoLucho = Texto("Texto generico")
     val videoLucho = Video(Calidad.SD, 60)
+    val video2Lucho = Video(Calidad.SD, 60)
 
     val fotoJulian = Foto(10, 10)
     val textoJulian = Texto("Texto generico")
@@ -24,15 +25,19 @@ class UsuarioTest : DescribeSpec({
     val textoFede = Texto("Texto generico")
     val videoFede = Video(Calidad.SD, 60)
 
+    val fotoX = Foto(10,10)
+
     //Usuarios
     val lucho = Usuario()
     val julian = Usuario()
     val fede = Usuario()
+    val marcelo = Usuario()
 
     //Agrega publi a Lucho
     lucho.agregarPublicacion(videoLucho)
     lucho.agregarPublicacion(videoLucho)
     lucho.agregarPublicacion(videoLucho)
+    lucho.agregarPublicacion(video2Lucho)
     julian.agregarPublicacion(fotoJulian)
     julian.agregarPublicacion(textoJulian)
     julian.agregarPublicacion(videoJulian)
@@ -121,28 +126,72 @@ class UsuarioTest : DescribeSpec({
       }
     }
 
-    //Retomar despues. Hay un quilombo con puedeVerPublicacion
-    /*describe("Saber si un usuario puede ver una cierta publicacion."){
+    //REQ 4
+    describe("Saber si un usuario puede ver una cierta publicacion."){
       it("puede ver una publicacion publica"){
-        videoLucho.puedeVerPublicacion(julian,lucho).shouldBe(true)
+        videoLucho.puedeVer(julian,lucho).shouldBe(true)
       }
+      //Un usuario NO puede NO ver una publicacion publica.
+
       it("puede ver una publicacion solo amigos"){
-        videoLucho.puedeVerPublicacion(julian,lucho).shouldBe(true)
+        lucho.agregarAmigo(julian)
+        videoLucho.cambiarPermiso(SoloAmigos)
+        videoLucho.puedeVer(julian,lucho).shouldBe(true)
+      }
+      it("NO puede ver una publicacion solo amigos"){
+        videoLucho.cambiarPermiso(SoloAmigos)
+        videoLucho.puedeVer(marcelo,lucho).shouldBe(false)
       }
       it("puede ver una publicacion privado con lista de permitidos"){
-        videoLucho.puedeVerPublicacion(julian,lucho).shouldBe(true)
+        videoLucho.cambiarPermiso(PrivadoConListaDePermitidos)
+        lucho.agregarAmigo(julian)
+        videoLucho.agregarPermitido(julian)
+        videoLucho.puedeVer(julian,lucho).shouldBe(true)
       }
-      it("puede ver una publicacion privado con lista de excluidos"){
-        videoLucho.puedeVerPublicacion(julian,lucho).shouldBe(true)
+      it("NO puede ver una publicacion privada con lista de permitidos"){
+        videoLucho.cambiarPermiso(PrivadoConListaDePermitidos)
+        lucho.agregarAmigo(fede)
+        videoLucho.puedeVer(fede,lucho).shouldBe(false)
+      }
+      it("puede ver una publicacion publica con lista de excluidos"){
+        videoLucho.cambiarPermiso(PublicoConListaDeExcluidos)
+        lucho.agregarAmigo(fede)
+        videoLucho.puedeVer(fede,lucho).shouldBe(true)
+      }
+      it("NO puede ver una publicacion publica con lista de excluidos"){
+        videoLucho.cambiarPermiso(PublicoConListaDeExcluidos)
+        videoLucho.excluirAmigo(julian)
+        videoLucho.puedeVer(julian,lucho).shouldBe(false)
       }
     }
-    */
-    /*  describe("Determinar los mejores amigos de un usuario: el conjunto de sus amigos que pueden ver todas sus publicaciones."){
 
-      it(""){
-
+    //REQ 5
+    describe("Mejores amigos de un usuario"){
+      it("el conjunto de sus amigos que pueden ver todas sus publicaciones"){ //realizar mejoresAmigos()
+        textoLucho.cambiarPermiso(SoloAmigos)
+        videoLucho.cambiarPermiso(PublicoConListaDeExcluidos)
+        video2Lucho.cambiarPermiso(PrivadoConListaDePermitidos)
+        lucho.agregarAmigo(julian)
+        video2Lucho.agregarPermitido(julian)
+        lucho.agregarAmigo(fede)
+        video2Lucho.agregarPermitido(fede)
+        lucho.agregarAmigo(marcelo)
+        lucho.mejoresAmigos().shouldContainAll(julian,fede) //Una lista que contenga a julian y fede.
       }
-    }*/
+      it("Amigos que NO pueden ver sus publicaciones"){
+        textoLucho.cambiarPermiso(SoloAmigos)
+        videoLucho.cambiarPermiso(PublicoConListaDeExcluidos)
+        video2Lucho.cambiarPermiso(PrivadoConListaDePermitidos)
+        lucho.agregarAmigo(julian)
+        lucho.agregarAmigo(fede)
+        video2Lucho.agregarPermitido(fede)
+        video2Lucho.agregarPermitido(julian)
+        lucho.agregarAmigo(marcelo)
+        lucho.mejoresAmigos().shouldNotBe(marcelo)//Una lista que NO contenga a Marcelo.
+      }
+    }
+
+    //REQ 6
     describe("El amigo más popular que tiene un usuario. Es decir, el amigo que tiene mas me gusta entre todas sus publicaciones.") {
       it("Es el amigo mas popular") {
         julian.agregarAmigo(fede)
@@ -165,6 +214,7 @@ class UsuarioTest : DescribeSpec({
       }
     }
 
+    //REQ 7
     describe("Un usuario stalkea a otro. Lo cual ocurre si el stalker le dio me gusta a más del 90% de sus publicaciones"){
       it("es Stalker"){
         julian.agregarAmigo(lucho)
@@ -172,6 +222,7 @@ class UsuarioTest : DescribeSpec({
         lucho.meLikea(textoLucho,julian)
         lucho.meLikea(fotoLucho,julian)
         lucho.meLikea(videoLucho,julian)
+        lucho.meLikea(video2Lucho,julian)
         lucho.esStalker(julian).shouldBe(true)
       }
       it("NO es Stalker"){
