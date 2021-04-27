@@ -25,8 +25,6 @@ class UsuarioTest : DescribeSpec({
     val textoFede = Texto("Texto generico")
     val videoFede = Video(Calidad.SD, 60)
 
-    val fotoX = Foto(10,10)
-
     //Usuarios
     val lucho = Usuario()
     val julian = Usuario()
